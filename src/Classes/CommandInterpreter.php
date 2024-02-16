@@ -2,6 +2,8 @@
 
 namespace Devoted\MemoryDB\Classes;
 
+use Devoted\MemoryDB\Exceptions\ExitException;
+
 class CommandInterpreter {
 
   const RESPONSE_INVALID_COMMAND = 'INVALID COMMAND';
@@ -13,6 +15,11 @@ class CommandInterpreter {
     $this->transactionCoordinator = $transactionCoordinator;
   }
 
+  /**
+   * @param string $command
+   * @return string|null
+   * @throws ExitException
+   */
   public function runCommand(string $command): ?string {
     $command = new Command($command);
 
@@ -40,6 +47,8 @@ class CommandInterpreter {
       case Command::COMMAND_COMMIT:
         $this->transactionCoordinator->commitTransactions();
         break;
+      case Command::COMMAND_EXIT;
+        throw new ExitException();
       default:
         break;
     }

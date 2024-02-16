@@ -19,8 +19,6 @@ class Command {
 
   const COMMAND_COMMIT = 'COMMIT';
 
-  const COMMAND_EXIT = 'EXIT';
-
   private string $rawCommand;
 
   private string $commandVerb;
@@ -80,8 +78,7 @@ class Command {
       self::COMMAND_END,
       self::COMMAND_BEGIN,
       self::COMMAND_ROLLBACK,
-      self::COMMAND_COMMIT,
-      self::COMMAND_EXIT
+      self::COMMAND_COMMIT
     ];
   }
 

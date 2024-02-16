@@ -47,6 +47,9 @@ If there is no open transaction scope, the command is a no-op.
 The `COMMIT` command instructs the database to apply all commands that occured between it and the `BEGIN` command, in order. 
 If there is no open transaction scope, the command is a no-op.
 
+### `EXIT`
+The `EXIT` command will terminate the database session gracefully.
+
 ## Running a Memory Database
 
 This solution assumes you have docker desktop installed. 

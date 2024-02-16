@@ -47,7 +47,7 @@ class CommandInterpreter {
       case Command::COMMAND_COMMIT:
         $this->transactionCoordinator->commitTransactions();
         break;
-      case Command::COMMAND_EXIT;
+      case Command::COMMAND_END;
         throw new ExitException();
       default:
         break;

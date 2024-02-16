@@ -16,10 +16,7 @@ class CommandInterpreterTest extends TestCase {
   protected function getCommandInterpreter($database = null): CommandInterpreter {
     $transactionCoordinator = new TransactionCoordinator($database ?? $this->prophesize(DatabaseCommandInterface::class)->reveal());
 
-    return new CommandInterpreter(
-      $transactionCoordinator,
-      (new NullLogger())
-    );
+    return new CommandInterpreter($transactionCoordinator);
   }
 
   public function testInvalidCommand(): void {
@@ -82,7 +79,7 @@ class CommandInterpreterTest extends TestCase {
 
     $mockTC->beginTransaction()->shouldBeCalled();
 
-    $commandLineInterpreter = new CommandInterpreter($mockTC->reveal(), (new NullLogger()));
+    $commandLineInterpreter = new CommandInterpreter($mockTC->reveal());
     $commandLineInterpreter->runCommand("BEGIN");
     $commandLineInterpreter->runCommand("begin");
   }
@@ -92,7 +89,7 @@ class CommandInterpreterTest extends TestCase {
 
     $mockTC->rollbackTransaction()->shouldBeCalled();
 
-    $commandLineInterpreter = new CommandInterpreter($mockTC->reveal(), (new NullLogger()));
+    $commandLineInterpreter = new CommandInterpreter($mockTC->reveal());
     $commandLineInterpreter->runCommand("ROLLBACK");
     $commandLineInterpreter->runCommand("rollback");
   }
@@ -102,7 +99,7 @@ class CommandInterpreterTest extends TestCase {
 
     $mockTC->commitTransactions()->shouldBeCalled();
 
-    $commandLineInterpreter = new CommandInterpreter($mockTC->reveal(), (new NullLogger()));
+    $commandLineInterpreter = new CommandInterpreter($mockTC->reveal());
     $commandLineInterpreter->runCommand("COMMIT");
     $commandLineInterpreter->runCommand("commit");
   }

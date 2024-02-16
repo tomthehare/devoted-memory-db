@@ -6,7 +6,6 @@ use Devoted\MemoryDB\Classes\CommandInterpreter;
 use Devoted\MemoryDB\Classes\MemoryDatabase;
 use Devoted\MemoryDB\Classes\TransactionCoordinator;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\NullLogger;
 
 class PdfTest extends TestCase {
 
@@ -86,7 +85,7 @@ class PdfTest extends TestCase {
   public function testHarness(array $commandsWithExpectedOutput): void {
     $database = new MemoryDatabase();
     $transactionCoordinator = new TransactionCoordinator($database);
-    $commandInterpreter = new CommandInterpreter($transactionCoordinator, (new NullLogger()));
+    $commandInterpreter = new CommandInterpreter($transactionCoordinator);
 
     foreach ($commandsWithExpectedOutput as $details) {
       $command = $details[0];

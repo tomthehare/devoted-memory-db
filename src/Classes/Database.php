@@ -6,9 +6,9 @@ use Devoted\MemoryDB\Interfaces\DatabaseInterface;
 
 class Database implements DatabaseInterface {
 
-  public function countValues(string $value): int
+  public function count(string $value): int
   {
-    // TODO: Implement countValues() method.
+    return -1;
   }
 
   public function set(string $name, string $value): void
@@ -18,7 +18,7 @@ class Database implements DatabaseInterface {
 
   public function get(string $name): string
   {
-    // TODO: Implement get() method.
+    return '';
   }
 
   public function delete(string $name): void
@@ -33,7 +33,7 @@ class Database implements DatabaseInterface {
 
   public function rollbackTransaction(): bool
   {
-    // TODO: Implement rollbackTransaction() method.
+    return false;
   }
 
   public function commitTransactions(): void

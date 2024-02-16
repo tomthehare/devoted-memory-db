@@ -4,7 +4,7 @@ namespace Devoted\MemoryDB\Interfaces;
 
 interface DatabaseInterface {
 
-  public function countValues(string $value): int;
+  public function count(string $value): int;
 
   public function set(string $name, string $value): void;
 

@@ -12,7 +12,7 @@ RUN mkdir -p devoted/memory-db
 COPY . /devoted/memory-db
 
 # Install composer, the package manager for PHP
-RUN sh /devoted/memory-db/bin/install-composer.sh
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 # Install php library dependencies
 RUN composer install \

@@ -5,10 +5,17 @@ This repository contains code that runs an in-memory database.
 The input is fed to it via `stdin` and the arguments are executed in order, line by line.
 Given that it's an in-memory database, the state will only last as long as the process is running.
 
-## Universal Truths
-* All keys must be non-empty strings
-* All values must be non-empty strings
-* When a transaction is open, dirty reads will happen (you will read the uncommitted value or see a count reflecting the uncommitted value).
+## Quickstart
+
+This solution assumes you have docker desktop installed.
+If you do not, you can do so by visiting the [docker site](https://www.docker.com/products/docker-desktop/). 
+I thought using docker would be easier than trying to make you install PHP on whatever environment you are testing with!
+
+Run the following command from within the root folder of this repo to start a new database:
+
+```bash
+docker compose run --rm memory-db
+```
 
 ## Supported Commands
 
@@ -50,17 +57,6 @@ If there is no open transaction scope, the command is a no-op.
 ### `EXIT`
 The `EXIT` command will terminate the database session gracefully.
 
-## Running a Memory Database
-
-This solution assumes you have docker desktop installed. 
-If you do not, you can do so by visiting the [docker site](https://www.docker.com/products/docker-desktop/).
-
-Run the following command from within the root folder of this repo to start a new database:
-
-```bash
-docker compose run memory-db
-```
-
 ## Running Tests
 
 To run tests, run the following commands:
@@ -70,3 +66,5 @@ docker compose run --rm memory-db-dev
 composer install
 php vendor/bin/phpunit tests/Unit --testdox --colors=always
 ```
+The way the docker volumes are set up, if you don't have the `vendor` dir already, you'll lose the one that was created during build. 
+This is why we run `composer install` - just to make sure its there.

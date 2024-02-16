@@ -1,8 +1,7 @@
 # devoted-memory-db
 
 ## Overview
-This repository contains code that runs an in-memory database. 
-The input is fed to it via `stdin` and the arguments are executed in order, line by line.
+This repository contains code that runs an in-memory database.
 Given that it's an in-memory database, the state will only last as long as the process is running.
 
 ## Quickstart

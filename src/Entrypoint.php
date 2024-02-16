@@ -3,9 +3,7 @@
 namespace Devoted\MemoryDB;
 
 use Devoted\MemoryDB\Classes\CommandInterpreter;
-use Devoted\MemoryDB\Classes\Database;
-use Devoted\MemoryDB\Utility\ColorfulConsoleLogger;
-use Psr\Log\NullLogger;
+use Devoted\MemoryDB\Classes\MemoryDatabase;
 
 class Entrypoint {
 
@@ -36,11 +34,9 @@ require '/devoted/memory-db/vendor/autoload.php';
 
 // Set to true to get some more verbose logging.
 $debug = true;
-$logger = $debug ? ColorfulConsoleLogger::getLogger() : (new NullLogger());
 
 $commandInterpreter = new CommandInterpreter(
-  (new Database()),
-  $logger
+  (new MemoryDatabase())
 );
 
 (new Entrypoint($commandInterpreter))->executeControlLoop();

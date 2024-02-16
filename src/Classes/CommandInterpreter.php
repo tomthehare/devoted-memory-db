@@ -2,56 +2,48 @@
 
 namespace Devoted\MemoryDB\Classes;
 
-use Devoted\MemoryDB\Classes\Command;
-use Devoted\MemoryDB\Interfaces\DatabaseInterface;
-use Psr\Log\LoggerInterface;
-
 class CommandInterpreter {
 
   const RESPONSE_INVALID_COMMAND = 'INVALID COMMAND';
   const RESPONSE_TRANSACTION_NOT_FOUND = 'TRANSACTION NOT FOUND';
 
-  private DatabaseInterface $database;
-  private LoggerInterface $logger;
+  private TransactionCoordinator $transactionCoordinator;
 
-  public function __construct(DatabaseInterface $database, LoggerInterface $logger) {
-    $this->database = $database;
-    $this->logger = $logger;
+  public function __construct(TransactionCoordinator $transactionCoordinator) {
+    $this->transactionCoordinator = $transactionCoordinator;
   }
 
-  public function runCommand(string $command): string {
-    $this->logger->debug('Evaluating command: ' . $command);
-
+  public function runCommand(string $command): ?string {
     $command = new Command($command);
 
     if (!$command->isValid()) {
       return self::RESPONSE_INVALID_COMMAND;
     }
 
-    $this->logger->debug($command->toJson());
-
     switch ($command->commandVerb()) {
       case Command::COMMAND_SET:
-        $this->database->set($command->input1(), $command->getInput2());
-        return '';
+        $this->transactionCoordinator->set($command->input1(), $command->input2());
+        break;
       case Command::COMMAND_GET:
-        $value = $this->database->get($command->input1());
+        $value = $this->transactionCoordinator->get($command->input1());
         return $value != '' ? $value : 'NULL';
       case Command::COMMAND_DELETE:
-        $this->database->delete($command->input1());
-        return '';
+        $this->transactionCoordinator->delete($command->input1());
+        break;
       case Command::COMMAND_COUNT:
-        return (string) $this->database->count($command->input1());
+        return (string) $this->transactionCoordinator->count($command->input1());
       case Command::COMMAND_BEGIN:
-        $this->database->beginTransaction();
-        return '';
+        $this->transactionCoordinator->beginTransaction();
+        break;
       case Command::COMMAND_ROLLBACK:
-        return $this->database->rollbackTransaction() ? '' : self::RESPONSE_TRANSACTION_NOT_FOUND;
+        return $this->transactionCoordinator->rollbackTransaction() ? null : self::RESPONSE_TRANSACTION_NOT_FOUND;
       case Command::COMMAND_COMMIT:
-        $this->database->commitTransactions();
-        return '';
+        $this->transactionCoordinator->commitTransactions();
+        break;
       default:
-        return '';
+        break;
     }
+
+    return null;
   }
 }

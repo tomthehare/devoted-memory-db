@@ -3,8 +3,8 @@
 namespace Devoted\MemoryDB\Tests\Unit\Classes;
 
 use Devoted\MemoryDB\Classes\CommandInterpreter;
-use Devoted\MemoryDB\Classes\Command;
-use Devoted\MemoryDB\Interfaces\DatabaseInterface;
+use Devoted\MemoryDB\Classes\TransactionCoordinator;
+use Devoted\MemoryDB\Interfaces\DatabaseCommandInterface;
 use Devoted\MemoryDB\Utility\ColorfulConsoleLogger;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -14,10 +14,11 @@ class CommandInterpreterTest extends TestCase {
   use ProphecyTrait;
 
   protected function getCommandInterpreter($database = null): CommandInterpreter {
+    $transactionCoordinator = new TransactionCoordinator($database ?? $this->prophesize(DatabaseCommandInterface::class)->reveal());
+
     return new CommandInterpreter(
-      $database ?? $this->prophesize(DatabaseInterface::class)->reveal(),
-//      (new NullLogger())
-      ColorfulConsoleLogger::getLogger()
+      $transactionCoordinator,
+      (new NullLogger())
     );
   }
 
@@ -30,7 +31,7 @@ class CommandInterpreterTest extends TestCase {
   }
 
   public function testGetCommandCallsGet(): void {
-    $mockDb = $this->prophesize(DatabaseInterface::class);
+    $mockDb = $this->prophesize(DatabaseCommandInterface::class);
 
     $name = 'the-name';
     $mockDb->get($name)->willReturn('something')->shouldBeCalledTimes(2);
@@ -41,7 +42,7 @@ class CommandInterpreterTest extends TestCase {
   }
 
   public function testSetCommandCallsSet(): void {
-    $mockDb = $this->prophesize(DatabaseInterface::class);
+    $mockDb = $this->prophesize(DatabaseCommandInterface::class);
     $name = 'the-name';
     $value = 'the-value';
     $mockDb->set($name, $value)->shouldBeCalledTimes(2);
@@ -53,9 +54,11 @@ class CommandInterpreterTest extends TestCase {
   }
 
   public function testDeleteCommandCallsDelete(): void {
-    $mockDb = $this->prophesize(DatabaseInterface::class);
+    $mockDb = $this->prophesize(DatabaseCommandInterface::class);
 
     $name = 'the-name';
+    // There is a GET call prior to the DELETE happening in order to coordinate transactions and to check if the delete actually needs to occur.
+    $mockDb->get($name)->shouldBeCalledTimes(2);;
     $mockDb->delete($name)->shouldBeCalledTimes(2);
 
     $commandLineInterpreter = $this->getCommandInterpreter($mockDb->reveal());
@@ -64,7 +67,7 @@ class CommandInterpreterTest extends TestCase {
   }
 
   public function testCountCommandCallsCount(): void {
-    $mockDb = $this->prophesize(DatabaseInterface::class);
+    $mockDb = $this->prophesize(DatabaseCommandInterface::class);
 
     $value = 'the-value';
     $mockDb->count($value)->shouldBeCalledTimes(2);
@@ -75,31 +78,31 @@ class CommandInterpreterTest extends TestCase {
   }
 
   public function testBeginCommandCallsBegin(): void {
-    $mockDb = $this->prophesize(DatabaseInterface::class);
+    $mockTC = $this->prophesize(TransactionCoordinator::class);
 
-    $mockDb->beginTransaction()->shouldBeCalledTimes(2);
+    $mockTC->beginTransaction()->shouldBeCalled();
 
-    $commandLineInterpreter = $this->getCommandInterpreter($mockDb->reveal());
+    $commandLineInterpreter = new CommandInterpreter($mockTC->reveal(), (new NullLogger()));
     $commandLineInterpreter->runCommand("BEGIN");
     $commandLineInterpreter->runCommand("begin");
   }
 
   public function testRollbackCommandCallsRollback(): void {
-    $mockDb = $this->prophesize(DatabaseInterface::class);
+    $mockTC = $this->prophesize(TransactionCoordinator::class);
 
-    $mockDb->rollbackTransaction()->shouldBeCalledTimes(2);
+    $mockTC->rollbackTransaction()->shouldBeCalled();
 
-    $commandLineInterpreter = $this->getCommandInterpreter($mockDb->reveal());
+    $commandLineInterpreter = new CommandInterpreter($mockTC->reveal(), (new NullLogger()));
     $commandLineInterpreter->runCommand("ROLLBACK");
     $commandLineInterpreter->runCommand("rollback");
   }
 
   public function testCommitCommandCallsCommit(): void {
-    $mockDb = $this->prophesize(DatabaseInterface::class);
+    $mockTC = $this->prophesize(TransactionCoordinator::class);
 
-    $mockDb->commitTransactions()->shouldBeCalledTimes(2);
+    $mockTC->commitTransactions()->shouldBeCalled();
 
-    $commandLineInterpreter = $this->getCommandInterpreter($mockDb->reveal());
+    $commandLineInterpreter = new CommandInterpreter($mockTC->reveal(), (new NullLogger()));
     $commandLineInterpreter->runCommand("COMMIT");
     $commandLineInterpreter->runCommand("commit");
   }

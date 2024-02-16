@@ -41,7 +41,7 @@ class Command {
     return $this->input1;
   }
 
-  public function getInput2(): string {
+  public function input2(): string {
     return $this->input2;
   }
 
@@ -114,5 +114,17 @@ class Command {
       'input1' => $this->input1,
       'input2' => $this->input2
     ];
+  }
+
+  public function isSetCommand(): bool {
+    return $this->commandVerb == Command::COMMAND_SET;
+  }
+
+  public function isDeleteCommand(): bool {
+    return $this->commandVerb == Command::COMMAND_DELETE;
+  }
+
+  public function toString(): string {
+    return $this->commandVerb() . ' ' . $this->input1() . ' ' . $this->input2;
   }
 }

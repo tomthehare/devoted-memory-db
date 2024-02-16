@@ -5,9 +5,10 @@ This repository contains code that runs an in-memory database.
 The input is fed to it via `stdin` and the arguments are executed in order, line by line.
 Given that it's an in-memory database, the state will only last as long as the process is running.
 
-## Universal Validations
+## Universal Truths
 * All keys must be non-empty strings
 * All values must be non-empty strings
+* When a transaction is open, dirty reads will happen (you will read the uncommitted value or see a count reflecting the uncommitted value).
 
 ## Supported Commands
 

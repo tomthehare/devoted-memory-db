@@ -94,14 +94,6 @@ class PdfTest extends TestCase {
 
       $output = $commandInterpreter->runCommand($command);
 
-      echo ' =====================COMMAND======================' . PHP_EOL;
-      echo $command . ' => ' . $output . PHP_EOL . PHP_EOL;
-
-      echo 'DATABASE STATE: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~' . PHP_EOL;
-      $database->printState();
-      echo 'TX STATE: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~' . PHP_EOL;
-      $transactionCoordinator->print();
-
       self::assertEquals($expectedOutput, $output);
     }
   }

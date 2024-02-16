@@ -52,10 +52,4 @@ class Transaction {
 
     return false;
   }
-
-  public function print(): void {
-    foreach ($this->getAntiCommands() as $command) {
-      echo '  -- ' . $command->toString() . PHP_EOL;
-    }
-  }
 }

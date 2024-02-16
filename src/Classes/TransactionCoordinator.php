@@ -105,13 +105,4 @@ class TransactionCoordinator implements TransactionCommandInterface, DatabaseCom
       $this->database->delete($name);
     }
   }
-
-  public function print(): void {
-    echo 'Active transaction? ' . (!is_null($this->activeTransaction) ? spl_object_hash($this->activeTransaction) : ' none') . PHP_EOL;
-    foreach ($this->transactionScopes as $index => $tx) {
-      echo 'TX ' . $index . ' (' . spl_object_hash($tx) . ')' . PHP_EOL;
-      $tx->print();
-      echo PHP_EOL;
-    }
-  }
 }

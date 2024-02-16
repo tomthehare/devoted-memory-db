@@ -1,0 +1,14 @@
+version: "3.8"
+services:
+  memory-db: &memory-db
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: php src/Entrypoint.php
+
+  # Same build, but with a volume mounted so code shows up right away.  Makes development simpler
+  memory-db-dev:
+    <<: *memory-db
+    entrypoint: /bin/bash
+    volumes:
+      - .:/devoted/memory-db

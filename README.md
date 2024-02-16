@@ -33,7 +33,7 @@ The `END` command terminates the database session.
 
 ### `BEGIN` 
 The `BEGIN` command instructs the database to start a new transaction scope. 
-If there is already a transaction scope open, a `TransactionAlreadyInProgressException` will be thrown. 
+Nested transactions are supported. 
 
 All commands following the `BEGIN` command will be grouped together to be executed when the transaction is committed.
 
@@ -45,3 +45,24 @@ If there is no open transaction scope, the command is a no-op.
 ### `COMMIT` 
 The `COMMIT` command instructs the database to apply all commands that occured between it and the `BEGIN` command, in order. 
 If there is no open transaction scope, the command is a no-op.
+
+## Running a Memory Database
+
+This solution assumes you have docker desktop installed. 
+If you do not, you can do so by visiting the [docker site](https://www.docker.com/products/docker-desktop/).
+
+Run the following command from within the root folder of this repo to start a new database:
+
+```bash
+docker compose run memory-db
+```
+
+## Running Tests
+
+To run tests, run the following commands:
+
+```bash
+docker compose run --rm memory-db-dev
+composer install
+php vendor/bin/phpunit tests/Unit --testdox --colors=always
+```
